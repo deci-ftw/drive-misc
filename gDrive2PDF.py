@@ -26,7 +26,11 @@ try:
 except ImportError:
     flags = None
 
+FILE_ID = 'XXXXXXXXXXXXXXXXXXXXX'
+FILENAME = 'XXXXXXXXXXXXXXXXXXXXX'
+MIMETYPE = 'application/pdf'
 SCOPES = 'https://www.googleapis.com/auth/drive'
+
 store = file.Storage('storage.json')
 creds = store.get()
 if not creds or creds.invalid:
@@ -34,14 +38,9 @@ if not creds or creds.invalid:
     creds = tools.run_flow(flow, store, flags) \
             if flags else tools.run(flow, store)
 DRIVE = build('drive', 'v3', http=creds.authorize(Http()))
-
-FILE_ID = 'XXXXXXXXXXXXXXXXXXXXX'
-FILENAME = 'XXXXXXXXXXXXXXXXXXXXX'
-if True:
-    MIMETYPE = 'application/pdf'
-    data = DRIVE.files().export(fileId=FILE_ID, mimeType=MIMETYPE).execute()
-    if data:
-        fn = '%s.pdf' % os.path.splitext(FILENAME)[0]
-        with open(fn, 'wb') as fh:
-            fh.write(data)
-        print('Downloaded "%s" (%s)' % (fn, MIMETYPE))
+data = DRIVE.files().export(fileId=FILE_ID, mimeType=MIMETYPE).execute()
+if data:
+    fn = '%s.pdf' % os.path.splitext(FILENAME)[0]
+    with open(fn, 'wb') as fh:
+        fh.write(data)
+    print('Downloaded "%s" (%s)' % (fn, MIMETYPE))
